@@ -43,7 +43,7 @@ The Auto Annotation Pipeline is a comprehensive tool designed to streamline the 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/Auto_Annotation_Pipeline.git
+   git clone https://github.com/Gautham-Ramkumar03/Auto_Annotation_Pipeline.git
    cd Auto_Annotation_Pipeline
    ```
 
@@ -76,19 +76,34 @@ If you prefer not to use Conda, you can install the required packages manually:
 
 ## Usage
 
-### Complete Pipeline
+### Complete Pipeline (Recommended)
 
-The easiest way to use the Auto Annotation Pipeline is through the main pipeline script, which provides an interactive interface:
+For most users, the recommended approach is to use the end-to-end pipeline script, which seamlessly integrates all components into a single workflow:
 
 ```bash
 python auto_annotation_pipeline.py
 ```
 
-This will guide you through:
+This script provides:
+- **Streamlined workflow** - handles the entire process from video processing to dataset creation
+- **User-friendly interface** - interactive prompts guide you through all configuration options
+- **Optimized pipeline** - ensures each stage's output integrates correctly with the next
+- **Automatic resource management** - handles temporary files and directory structures
+- **Error handling** - provides clear feedback and troubleshooting guidance
+
+The pipeline guides you through:
 1. Selecting video input folder
 2. Configuring output format and augmentation settings
 3. Selecting model and annotation format
 4. Setting dataset split options
+
+After configuration, the script:
+1. Processes videos to extract frames
+2. Applies selected augmentation techniques
+3. Runs YOLOv8 to detect and annotate road damage
+4. Organizes everything into a properly structured dataset ready for training
+
+This all-in-one approach eliminates the need to manually coordinate between different scripts and ensures compatibility between steps.
 
 ### Individual Components
 
