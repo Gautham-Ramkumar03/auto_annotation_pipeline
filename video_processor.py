@@ -136,7 +136,7 @@ class VideoProcessor:
         print("0. No augmentation")
         print("1. Basic augmentation (simple transforms)")
         print("2. Standard augmentation (recommended)")
-        print("3. Advanced augmentation (comprehensive)")
+        print("3. Advanced augmentation (comprehensive)(dont use , in development)")
         print("4. Road Damage Minimal (focused on crack detection)")
         
         while True:
@@ -150,7 +150,8 @@ class VideoProcessor:
     
     def setup_dataset_structure(self):
         """Create the dataset directory structure"""
-        self.dataset_dir = os.path.join(os.getcwd(), 'dataset')
+        # Change to img_data folder instead of dataset
+        self.dataset_dir = os.path.join(os.getcwd(), 'img_data')
         if os.path.exists(self.dataset_dir):
             choice = input(f"The directory '{self.dataset_dir}' already exists. Overwrite? (y/n): ").strip().lower()
             if choice.startswith('y'):
@@ -159,10 +160,8 @@ class VideoProcessor:
                 print("Operation cancelled.")
                 return False
                 
-        # Create main dataset directory and subdirectories
+        # Create single output directory
         os.makedirs(self.dataset_dir, exist_ok=True)
-        for split in ['train', 'test', 'val']:
-            os.makedirs(os.path.join(self.dataset_dir, split), exist_ok=True)
             
         return True
     
@@ -785,32 +784,17 @@ class VideoProcessor:
             print(f"Error creating mosaic: {str(e)}")
             return None
     
-    def distribute_images(self, temp_dir, split_percentages, output_format):
-        """Distribute images to train/test/val according to split percentages"""
+    def distribute_images(self, temp_dir, output_format):
+        """Move all images to a single output folder"""
         all_images = [f for f in os.listdir(temp_dir) if f.endswith(f'.{output_format}')]
-        random.shuffle(all_images)  # Randomize to ensure equal distribution
         
-        # Calculate split indices
-        total_images = len(all_images)
-        train_end = int(total_images * split_percentages['train'] / 100)
-        test_end = train_end + int(total_images * split_percentages['test'] / 100)
-        
-        # Distribute images
-        splits = {
-            'train': all_images[:train_end],
-            'test': all_images[train_end:test_end],
-            'val': all_images[test_end:]
-        }
-        
-        # Move images to respective directories
-        for split_name, images in splits.items():
-            target_dir = os.path.join(self.dataset_dir, split_name)
-            for img in images:
-                src = os.path.join(temp_dir, img)
-                dst = os.path.join(target_dir, img)
-                shutil.copy2(src, dst)
+        # Move images to output directory
+        for img in all_images:
+            src = os.path.join(temp_dir, img)
+            dst = os.path.join(self.dataset_dir, img)
+            shutil.copy2(src, dst)
                 
-        return {k: len(v) for k, v in splits.items()}
+        return len(all_images)
         
     def process_videos(self):
         """Main function to process videos and create dataset"""
@@ -830,7 +814,8 @@ class VideoProcessor:
         # Get user inputs
         input_folder = self.get_input_folder()
         output_format = self.get_output_format()
-        split_percentages = self.get_dataset_split()
+        
+        # Remove dataset split choice and always use 100% for single folder
         
         # Get augmentation level instead of just yes/no
         aug_level = self.get_augmentation_choice()
@@ -937,9 +922,9 @@ class VideoProcessor:
             print(f"Created {aug_count} augmented images")
             total_frames += aug_count
         
-        # Distribute images to train/test/val folders
-        print("\nDistributing images to train/test/validation sets...")
-        distribution = self.distribute_images(temp_dir, split_percentages, output_format)
+        # Distribute images to single folder
+        print("\nMoving images to output folder...")
+        total_images = self.distribute_images(temp_dir, output_format)
         
         # Remove temporary directory
         shutil.rmtree(temp_dir)
@@ -947,10 +932,7 @@ class VideoProcessor:
         # Print summary
         print("\nDataset creation complete!")
         print(f"Total images: {total_frames}")
-        print("Distribution:")
-        for split, count in distribution.items():
-            print(f"  {split}: {count} images")
-        print(f"Dataset saved to {self.dataset_dir}")
+        print(f"All images saved to {self.dataset_dir}")
 
 if __name__ == "__main__":
     print("Auto Annotation Pipeline - Video Processor")
