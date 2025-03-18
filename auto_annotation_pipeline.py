@@ -158,7 +158,7 @@ class AutoAnnotationPipeline:
         print("0. No augmentation")
         print("1. Basic augmentation (simple transforms)")
         print("2. Standard augmentation (recommended)")
-        print("3. Advanced augmentation (comprehensive)")
+        print("3. Advanced augmentation (comprehensive)(Dont use)")
         print("4. Road Damage Minimal (focused on crack detection)")
         
         while True:

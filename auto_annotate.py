@@ -491,7 +491,7 @@ def parse_args():
                         help='Directory containing images to process')
     parser.add_argument('--output-dir', type=str, default='dataset',
                         help='Directory to save annotated dataset')
-    parser.add_argument('--model', type=str, default='best.pt',
+    parser.add_argument('--model', type=str, default='models/best.pt',
                         help='Path to YOLOv8 model file')
     parser.add_argument('--format', type=str, choices=['yolo', 'coco', 'voc'], default='yolo',
                         help='Annotation format to use')
